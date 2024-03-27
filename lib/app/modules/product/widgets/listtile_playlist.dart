@@ -40,14 +40,14 @@ class ListTilePlaylist extends StatelessWidget {
           title: Text(
             title,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
           subtitle: Text(
             subtitle,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               fontWeight: FontWeight.w400,
             ),
           ),

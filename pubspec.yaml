@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   get: ^4.6.6
   dio: ^5.3.3
+  http:
   flick_video_player: ^0.7.0
   video_player: ^2.8.3
   shared_preferences: ^2.2.2

@@ -23,7 +23,7 @@ class CardProduct extends StatelessWidget {
         controller.changeProduct(index);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 25),
         margin: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : AppColors.bgGray,
@@ -35,7 +35,7 @@ class CardProduct extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 19,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
               color: isSelected ? Colors.white : Colors.black,
             ),

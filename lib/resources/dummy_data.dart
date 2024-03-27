@@ -37,7 +37,7 @@ const dummy = {
       "title": "Smart Table System",
       "description": "Solution for your business in queuing system information",
       "url":
-          "https://player.vimeo.com/video/558733589?title=0&portrait=0&byline=0&autoplay=1&muted=true",
+          "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
       "type": "video",
       "created_at": "2024-03-26T12:01:56.000000Z",
       "updated_at": "2024-03-26T12:01:57.000000Z"
@@ -47,8 +47,7 @@ const dummy = {
       "dir_id": 1,
       "title": "Interactive Walldoor",
       "description": "Show forex trading chart with flat currency",
-      "url":
-          "https://player.vimeo.com/video/558733589?title=0&portrait=0&byline=0&autoplay=1&muted=true",
+      "url": "https://www.youtube.com/watch?v=9xwazD5SyVg",
       "type": "video",
       "created_at": "2024-03-26T12:01:56.000000Z",
       "updated_at": "2024-03-26T12:01:57.000000Z"
