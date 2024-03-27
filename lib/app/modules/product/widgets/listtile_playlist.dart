@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:newtronic_app/resources/colors.dart';
 
-class ListTileProduct extends StatelessWidget {
-  const ListTileProduct({
+class ListTilePlaylist extends StatelessWidget {
+  const ListTilePlaylist({
     super.key,
     required this.title,
     required this.subtitle,
