@@ -5,16 +5,16 @@ import 'package:newtronic_app/resources/colors.dart';
 class CardProduct extends StatelessWidget {
   const CardProduct({
     super.key,
-    required this.controller,
-    required this.title,
-    required this.isSelected,
     required this.index,
+    required this.title,
+    required this.controller,
+    required this.isSelected,
   });
 
+  final int index;
   final String title;
   final ProductController controller;
   final bool isSelected;
-  final int index;
 
   @override
   Widget build(BuildContext context) {

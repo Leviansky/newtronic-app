@@ -121,6 +121,8 @@ class _ProductViewState extends State<ProductView> {
                 itemBuilder: (context, index) {
                   return Obx(
                     () => ListTilePlaylist(
+                      index: index,
+                      controller: controller,
                       title: controller.listPlaylist[index].title!,
                       subtitle: controller.listPlaylist[index].description!,
                     ),
