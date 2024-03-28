@@ -48,7 +48,7 @@ const dummy = {
       "title": "Interactive Walldoor",
       "description": "Show forex trading chart with flat currency",
       "url":
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+          "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
       "type": "video",
       "created_at": "2024-03-26T12:01:56.000000Z",
       "updated_at": "2024-03-26T12:01:57.000000Z"

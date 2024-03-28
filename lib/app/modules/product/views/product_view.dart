@@ -1,9 +1,15 @@
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:newtronic_app/app/modules/product/widgets/card_category.dart';
 import 'package:newtronic_app/app/modules/product/widgets/listtile_playlist.dart';
 import 'package:newtronic_app/app/modules/product/widgets/loading.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../resources/colors.dart';
 import '../controllers/product_controller.dart';
 
@@ -17,17 +23,37 @@ class ProductView extends StatefulWidget {
 class _ProductViewState extends State<ProductView> {
   final controller = Get.put(ProductController());
   late FlickManager flickManager;
+  ReceivePort _port = ReceivePort();
 
   @override
   void initState() {
     super.initState();
     controller.init();
+
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      String id = data[0];
+      DownloadTaskStatus status = data[1];
+      int progress = data[2];
+      setState(() {});
+    });
+
+    FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
   void dispose() {
     controller.videoPlayer.dispose();
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
     super.dispose();
+  }
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
   }
 
   @override
@@ -98,6 +124,7 @@ class ContentPlaylist extends StatelessWidget {
                 controller: controller,
                 title: controller.listPlaylist[index].title!,
                 subtitle: controller.listPlaylist[index].description!,
+                url: controller.listPlaylist[index].url!,
               ),
             );
           },
@@ -196,7 +223,7 @@ class ContentPlayer extends StatelessWidget {
           return const LoadingIndicator();
         } else {
           if (controller.selectedContentType.value == ContentTypeKeys.video) {
-            return FlickVideoPlayer(flickManager: controller.videoPlayer);
+            return VideoView(controller: controller);
           } else if (controller.selectedContentType.value ==
               ContentTypeKeys.image) {
             return ImageView(controller: controller);
@@ -215,6 +242,44 @@ class ContentPlayer extends StatelessWidget {
   }
 }
 
+class VideoView extends StatelessWidget {
+  const VideoView({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  final ProductController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () {
+        if (controller.isFileDownloaded.value) {
+          return FlickVideoPlayer(
+            key: UniqueKey(), // Gunakan UniqueKey di sini
+            flickManager: FlickManager(
+              videoPlayerController: VideoPlayerController.file(
+                File(controller.directoryFile.value),
+              ),
+              autoPlay: false,
+            ),
+          );
+        } else {
+          return FlickVideoPlayer(
+            key: UniqueKey(), // Dan juga di sini
+            flickManager: FlickManager(
+              videoPlayerController: VideoPlayerController.networkUrl(
+                Uri.parse(controller.url.value),
+              ),
+              autoPlay: false,
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
 class ImageView extends StatelessWidget {
   const ImageView({
     super.key,
@@ -225,23 +290,53 @@ class ImageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
-      controller.url.value,
-      height: double.infinity,
-      width: MediaQuery.of(context).size.width,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) {
-          return child;
-        } else {
-          return LoadingIndicator(
-            value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-                : null,
-          );
-        }
-      },
+    return Obx(
+      () => controller.isFileDownloaded.value
+          ? FutureBuilder<String>(
+              future: Future<String>.value(controller.directoryFile.value),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  final filePath = snapshot.data!;
+                  final file = File(filePath);
+                  if (file.existsSync()) {
+                    return Image.file(
+                      file,
+                      height: double.infinity,
+                      width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.cover,
+                    );
+                  } else {
+                    return const Text('File not found');
+                  }
+                }
+              },
+            )
+          : Obx(
+              () => Image.network(
+                controller.url.value,
+                height: double.infinity,
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  } else {
+                    return LoadingIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    );
+                  }
+                },
+              ),
+            ),
     );
   }
 }

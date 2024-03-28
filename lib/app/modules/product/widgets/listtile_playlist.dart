@@ -9,12 +9,14 @@ class ListTilePlaylist extends StatelessWidget {
     required this.title,
     required this.controller,
     required this.subtitle,
+    required this.url,
   });
 
   final int index;
   final String title;
   final ProductController controller;
   final String subtitle;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class ListTilePlaylist extends StatelessWidget {
           ),
           trailing: GestureDetector(
             onTap: () {
-              print('save');
+              controller.download(url);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
