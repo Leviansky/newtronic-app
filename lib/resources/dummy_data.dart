@@ -47,7 +47,8 @@ const dummy = {
       "dir_id": 1,
       "title": "Interactive Walldoor",
       "description": "Show forex trading chart with flat currency",
-      "url": "https://www.youtube.com/watch?v=9xwazD5SyVg",
+      "url":
+          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
       "type": "video",
       "created_at": "2024-03-26T12:01:56.000000Z",
       "updated_at": "2024-03-26T12:01:57.000000Z"
@@ -58,7 +59,7 @@ const dummy = {
       "title": "LED Display",
       "description": "Management can be implement in our services",
       "url":
-          "https://player.vimeo.com/video/558733589?title=0&portrait=0&byline=0&autoplay=1&muted=true",
+          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
       "type": "video",
       "created_at": "2024-03-26T12:01:56.000000Z",
       "updated_at": "2024-03-26T12:01:57.000000Z"
@@ -66,10 +67,9 @@ const dummy = {
     {
       "id": 6,
       "dir_id": 1,
-      "title": "Queuing Services",
+      "title": "Empty Url",
       "description": "Management can be implement in our services",
-      "url":
-          "https://player.vimeo.com/video/558733589?title=0&portrait=0&byline=0&autoplay=1&muted=true",
+      "url": "",
       "type": "video",
       "created_at": "2024-03-26T12:01:56.000000Z",
       "updated_at": "2024-03-26T12:01:57.000000Z"

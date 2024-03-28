@@ -1,13 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:newtronic_app/app/modules/product/widgets/card_category.dart';
 import 'package:newtronic_app/app/modules/product/widgets/listtile_playlist.dart';
 import 'package:newtronic_app/app/modules/product/widgets/loading.dart';
-import 'package:video_player/video_player.dart';
-
 import '../../../../resources/colors.dart';
 import '../controllers/product_controller.dart';
 
@@ -58,103 +54,163 @@ class _ProductViewState extends State<ProductView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //Video player
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Obx(() {
-              if (controller.isLoading.value) {
-                return const LoadingIndicator();
-              } else {
-                if (controller.selectedContentType.value == 'video') {
-                  return FlickVideoPlayer(flickManager: controller.videoPlayer);
-                } else if (controller.selectedContentType.value == 'image') {
-                  return ImageView(controller: controller);
-                } else {
-                  return const SizedBox(
-                    width: 20.0,
-                  );
-                }
-              }
-            }),
-          ),
+          //Content player
+          ContentPlayer(controller: controller),
           const SizedBox(
             height: 5.0,
           ),
           //Title and description about video
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            width: MediaQuery.of(context).size.width,
-            child: Obx(
-              () => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    controller.title.value,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    controller.subtitle.value,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          ContentDescription(controller: controller),
           const SizedBox(
             height: 15.0,
           ),
           //List Products
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            height: 50,
-            width: MediaQuery.of(context).size.width,
-            child: Obx(
-              () => ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.listProducts.length,
-                itemBuilder: (context, index) {
-                  return Obx(
-                    () => CardProduct(
-                      index: index,
-                      controller: controller,
-                      title: controller.listProducts[index].title!,
-                      isSelected:
-                          controller.selectedIndexProduct.value == index,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+          ProductList(controller: controller),
           const SizedBox(
             height: 15.0,
           ),
           //List Tile Playlist
-          Expanded(
-            child: Obx(
-              () => ListView.builder(
-                itemCount: controller.listPlaylist.length,
-                itemBuilder: (context, index) {
-                  return Obx(
-                    () => ListTilePlaylist(
-                      index: index,
-                      controller: controller,
-                      title: controller.listPlaylist[index].title!,
-                      subtitle: controller.listPlaylist[index].description!,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+          ContentPlaylist(controller: controller),
         ],
       ),
+    );
+  }
+}
+
+class ContentPlaylist extends StatelessWidget {
+  const ContentPlaylist({
+    super.key,
+    required this.controller,
+  });
+
+  final ProductController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Obx(
+        () => ListView.builder(
+          itemCount: controller.listPlaylist.length,
+          itemBuilder: (context, index) {
+            return Obx(
+              () => ListTilePlaylist(
+                index: index,
+                controller: controller,
+                title: controller.listPlaylist[index].title!,
+                subtitle: controller.listPlaylist[index].description!,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class ProductList extends StatelessWidget {
+  const ProductList({
+    super.key,
+    required this.controller,
+  });
+
+  final ProductController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      height: 50,
+      width: MediaQuery.of(context).size.width,
+      child: Obx(
+        () => ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.listProducts.length,
+          itemBuilder: (context, index) {
+            return Obx(
+              () => CardProduct(
+                index: index,
+                controller: controller,
+                title: controller.listProducts[index].title!,
+                isSelected: controller.selectedIndexProduct.value == index,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class ContentDescription extends StatelessWidget {
+  const ContentDescription({
+    super.key,
+    required this.controller,
+  });
+
+  final ProductController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      width: MediaQuery.of(context).size.width,
+      child: Obx(
+        () => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              controller.title.value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              controller.subtitle.value,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ContentPlayer extends StatelessWidget {
+  const ContentPlayer({
+    super.key,
+    required this.controller,
+  });
+
+  final ProductController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Obx(() {
+        if (controller.isLoading.value) {
+          return const LoadingIndicator();
+        } else {
+          if (controller.selectedContentType.value == ContentTypeKeys.video) {
+            return FlickVideoPlayer(flickManager: controller.videoPlayer);
+          } else if (controller.selectedContentType.value ==
+              ContentTypeKeys.image) {
+            return ImageView(controller: controller);
+          } else {
+            return const Text(
+              'Nothing here',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          }
+        }
+      }),
     );
   }
 }
