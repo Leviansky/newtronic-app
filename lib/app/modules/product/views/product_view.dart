@@ -125,6 +125,7 @@ class ContentPlaylist extends StatelessWidget {
                 title: controller.listPlaylist[index].title!,
                 subtitle: controller.listPlaylist[index].description!,
                 url: controller.listPlaylist[index].url!,
+                type: controller.listPlaylist[index].type!,
               ),
             );
           },
@@ -256,23 +257,13 @@ class VideoView extends StatelessWidget {
       () {
         if (controller.isFileDownloaded.value) {
           return FlickVideoPlayer(
-            key: UniqueKey(), // Gunakan UniqueKey di sini
-            flickManager: FlickManager(
-              videoPlayerController: VideoPlayerController.file(
-                File(controller.directoryFile.value),
-              ),
-              autoPlay: false,
-            ),
+            key: UniqueKey(),
+            flickManager: controller.videoPlayer,
           );
         } else {
           return FlickVideoPlayer(
-            key: UniqueKey(), // Dan juga di sini
-            flickManager: FlickManager(
-              videoPlayerController: VideoPlayerController.networkUrl(
-                Uri.parse(controller.url.value),
-              ),
-              autoPlay: false,
-            ),
+            key: UniqueKey(),
+            flickManager: controller.videoPlayer,
           );
         }
       },
@@ -312,7 +303,9 @@ class ImageView extends StatelessWidget {
                       fit: BoxFit.cover,
                     );
                   } else {
-                    return const Text('File not found');
+                    return const Center(
+                      child: Text('File not found'),
+                    );
                   }
                 }
               },

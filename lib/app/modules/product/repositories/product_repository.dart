@@ -3,7 +3,9 @@
 import 'dart:io';
 
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:get/get.dart';
 import 'package:newtronic_app/app/models/response.dart';
+import 'package:newtronic_app/app/modules/product/controllers/product_controller.dart';
 import 'package:newtronic_app/app/services/network_service.dart';
 import 'package:newtronic_app/resources/dummy_data.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,7 +25,7 @@ class ProductRepository {
     }
   }
 
-  Future<String?> downloadFile({
+  Future<bool?> downloadFile({
     required String url,
   }) async {
     try {
@@ -39,7 +41,7 @@ class ProductRepository {
         openFileFromNotification: true,
       );
       // }
-      return 'Success';
+      return Future.value(true);
     } catch (e) {
       rethrow;
     }
@@ -51,6 +53,7 @@ class ProductRepository {
       if (baseStorage != null) {
         String directoryPath = baseStorage.path;
         File fileToCheck = File('$directoryPath/$fileName');
+        print('$directoryPath/$fileName');
         return await fileToCheck.exists();
       } else {
         return false;
