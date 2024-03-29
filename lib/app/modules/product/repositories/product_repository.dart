@@ -1,13 +1,10 @@
 // ignore_for_file: avoid_print, body_might_complete_normally_nullable
 
 import 'dart:io';
-
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:newtronic_app/app/models/response.dart';
 import 'package:newtronic_app/app/services/network_service.dart';
 import 'package:newtronic_app/resources/dummy_data.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ProductRepository {
   var network = NetworkService.to;
