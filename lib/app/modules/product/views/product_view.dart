@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:newtronic_app/app/modules/product/widgets/card_category.dart';
 import 'package:newtronic_app/app/modules/product/widgets/listtile_playlist.dart';
 import 'package:newtronic_app/app/modules/product/widgets/loading.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../resources/colors.dart';
 import '../controllers/product_controller.dart';
@@ -23,12 +24,14 @@ class ProductView extends StatefulWidget {
 class _ProductViewState extends State<ProductView> {
   final controller = Get.put(ProductController());
   late FlickManager flickManager;
-  ReceivePort _port = ReceivePort();
+  final ReceivePort _port = ReceivePort();
 
   @override
   void initState() {
     super.initState();
     controller.init();
+
+    Permission.storage.request();
 
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
@@ -80,22 +83,22 @@ class _ProductViewState extends State<ProductView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //Content player
+          //CONTENT PLAYER
           ContentPlayer(controller: controller),
           const SizedBox(
             height: 5.0,
           ),
-          //Title and description about video
+          //TITLE AND DESCRIPTION OF CONTENT
           ContentDescription(controller: controller),
           const SizedBox(
             height: 15.0,
           ),
-          //List Products
+          //LIST PRODUCTS
           ProductList(controller: controller),
           const SizedBox(
             height: 15.0,
           ),
-          //List Tile Playlist
+          //LIST PLAYLIST
           ContentPlaylist(controller: controller),
         ],
       ),
@@ -223,17 +226,26 @@ class ContentPlayer extends StatelessWidget {
         if (controller.isLoading.value) {
           return const LoadingIndicator();
         } else {
+          // SHOW VIDEO IF TYPE OF SELECTED CONTENT IS VIDEO
           if (controller.selectedContentType.value == ContentTypeKeys.video) {
             return VideoView(controller: controller);
-          } else if (controller.selectedContentType.value ==
+          }
+          // SHOW IMAGE IF TYPE OF SELECTED CONTENT IS IMAGE
+          else if (controller.selectedContentType.value ==
               ContentTypeKeys.image) {
             return ImageView(controller: controller);
           } else {
-            return const Text(
-              'Nothing here',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: const Center(
+                child: Text(
+                  "Please reconnect or change your connection as the API link used is a Public IP ☠️",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             );
           }

@@ -30,13 +30,19 @@ class ListTilePlaylist extends StatelessWidget {
     return Obx(
       () => GestureDetector(
         onTap: () {
+          // SKIP WHEN CARD IS SELECTED
+          if (controller.selectedIndexContent.value == index) return;
+
+          // CHANGE SELECTED FUNCTION
           controller.changeSelected(index);
         },
         child: Card(
+          // CHANGE COLOR WHEN CARD IS SELECTED
           color: controller.selectedIndexContent.value == index
               ? AppColors.primary.withOpacity(0.2)
               : Colors.white,
           child: ListTile(
+            // CHANGE COLOR WHEN CARD IS SELECTED
             tileColor: controller.selectedIndexContent.value == index
                 ? AppColors.primary.withOpacity(0.2)
                 : Colors.white,
@@ -44,12 +50,19 @@ class ListTilePlaylist extends StatelessWidget {
               side: const BorderSide(color: Colors.black, width: 1),
               borderRadius: BorderRadius.circular(10),
             ),
-            leading: const SizedBox(
+            // ICON DEPENDS TYPE OF FILE
+            leading: SizedBox(
               height: double.infinity,
-              child: Icon(
-                Icons.play_circle_fill,
-                size: 40,
-              ),
+              child:
+                  controller.listPlaylist[index].type == ContentTypeKeys.video
+                      ? const Icon(
+                          Icons.play_circle_fill,
+                          size: 40,
+                        )
+                      : const Icon(
+                          Icons.image,
+                          size: 40,
+                        ),
             ),
             title: Text(
               title,
@@ -65,6 +78,7 @@ class ListTilePlaylist extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
             ),
+            //FUTUREBUILDER WITH CHECKING FILE
             trailing: FutureBuilder<bool>(
               future: repo.isFileExists(url.split('/').last),
               builder: (context, snapshot) {
@@ -79,17 +93,29 @@ class ListTilePlaylist extends StatelessWidget {
                   } else {
                     return GestureDetector(
                       onTap: () async {
+                        // SKIP WHEN LOADING
                         if (controller.isLoadingPlaylist[index]) return;
-                        if (snapshot.data!) return;
-                        controller.changeLoadingStatus(index, true);
-                        await controller.download(url).then((value) =>
-                            controller.changeLoadingStatus(index, value!));
+
+                        // DELETE FUNCTION WHEN FILE EXIST
+                        if (snapshot.data!) {
+                          // CHECK IS SELECTED INDEX BEFORE DELETE
+                          if (controller.selectedIndexContent.value == index) {
+                            controller.deleteFile(url);
+                          } else {
+                            return;
+                          }
+                        } else {
+                          // DOWNLOAD FUNCTION WHEN FILE DOESNT EXIST
+                          controller.changeLoadingStatus(index, true);
+                          await controller.download(url).then((value) =>
+                              controller.changeLoadingStatus(index, value!));
+                        }
                       },
                       child: Container(
                         height: 20,
                         width: 70,
                         decoration: BoxDecoration(
-                          color: type == ContentTypeKeys.video
+                          color: snapshot.data!
                               ? AppColors.primary
                               : AppColors.secondary,
                           borderRadius: const BorderRadius.all(
@@ -115,7 +141,7 @@ class ListTilePlaylist extends StatelessWidget {
                                             style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                              color: Colors.white,
                                             ),
                                           )
                                         : const Text(
@@ -131,7 +157,7 @@ class ListTilePlaylist extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                          color: Colors.black,
                                         ),
                                       ),
                           ),
