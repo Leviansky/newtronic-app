@@ -15,9 +15,7 @@ Newtronic Assessment App is a versatile application designed to offer various fe
 
 ## User Interface
 
-![Main Screen](https://github.com/Leviansky/newtronic-app/assets/101730990/9b3a0aff-ad9d-4496-8575-08ac450cbe3a)
-
-![Video Playback](https://github.com/Leviansky/newtronic-app/assets/101730990/330c2634-027d-403d-98a2-4554ac8db750)
+<img src="https://github.com/Leviansky/newtronic-app/assets/101730990/330c2634-027d-403d-98a2-4554ac8db750" width="250"/>
 
 ## Packages and APIs
 
